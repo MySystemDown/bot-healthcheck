@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings:
+    SYSTEM_ID = os.getenv("SYSTEM_ID")
     API_TOKEN = os.getenv("API_TOKEN")
     API_URL = os.getenv("API_URL")
     
