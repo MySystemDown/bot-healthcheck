@@ -3,3 +3,25 @@ services:
     image: rabbitmq
     ports:
       - 5672:5672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  beat:
+    container_name: beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["uv", "run", "celery", "-A", "src.celery", "beat", "--loglevel=INFO"]
+    depends_on:
+      - rabbitmq
+  worker:
+    container_name: worker
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: ["uv", "run", "celery", "-A", "src.celery", "worker", "--loglevel=INFO"]
+    depends_on:
+      rabbitmq:
+        condition: service_healthyhealthy
